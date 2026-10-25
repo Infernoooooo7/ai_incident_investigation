@@ -1,0 +1,239 @@
+{
+  "id": "example-recovered-retry",
+  "agentName": "billing-reconciliation-agent",
+  "agentVersion": "0.9.7",
+  "task": "Reconcile payouts for 2026-10-18 against the general ledger and flag discrepancies over $50.",
+  "summary": "Recovered from one rate-limit error; flagged 2 payout discrepancies over $50.",
+  "status": "succeeded",
+  "startedAt": "2026-10-19T03:30:00.412Z",
+  "endedAt": "2026-10-19T03:30:10.012Z",
+  "metadata": {
+    "example": "Fictional run bundled with Agent Incident Investigator",
+    "trigger": "scheduler",
+    "model": "example-model-small"
+  },
+  "events": [
+    {
+      "id": "evt_01",
+      "sequence": 1,
+      "kind": "agent_message",
+      "name": "Task",
+      "role": "user",
+      "timestamp": "2026-10-19T03:30:00.412Z",
+      "status": "ok",
+      "text": "Reconcile payouts for 2026-10-18 against the general ledger and flag discrepancies over $50.",
+      "metadata": {
+        "trigger": "scheduler",
+        "schedule": "daily 03:30 UTC"
+      }
+    },
+    {
+      "id": "evt_02",
+      "sequence": 2,
+      "kind": "agent_message",
+      "name": "Plan",
+      "role": "assistant",
+      "timestamp": "2026-10-19T03:30:02.120Z",
+      "durationMs": 1650,
+      "status": "ok",
+      "text": "I'll list the payouts for 2026-10-18, pull the matching ledger entries, and compare them with a $50 threshold.",
+      "metadata": {
+        "model": "example-model-small",
+        "input_tokens": 1130,
+        "output_tokens": 29
+      }
+    },
+    {
+      "id": "evt_03",
+      "sequence": 3,
+      "kind": "tool_call",
+      "toolName": "payments.list_payouts",
+      "callId": "call_01",
+      "timestamp": "2026-10-19T03:30:02.170Z",
+      "status": "ok",
+      "input": {
+        "date": "2026-10-18",
+        "page_size": 250
+      },
+      "metadata": {
+        "api_base": "https://payments.example.com/v1",
+        "api_key": "pk-demo-not-a-real-key-4242"
+      }
+    },
+    {
+      "id": "evt_04",
+      "sequence": 4,
+      "kind": "tool_result",
+      "toolName": "payments.list_payouts",
+      "callId": "call_01",
+      "timestamp": "2026-10-19T03:30:02.350Z",
+      "durationMs": 180,
+      "status": "error",
+      "outcome": "error",
+      "errorCode": "RATE_LIMITED",
+      "errorMessage": "429 Too Many Requests: rate limit exceeded (Retry-After: 2)",
+      "metadata": {
+        "http_status": 429,
+        "retry_after_s": 2
+      }
+    },
+    {
+      "id": "evt_05",
+      "sequence": 5,
+      "kind": "retry",
+      "toolName": "payments.list_payouts",
+      "previousCallId": "call_01",
+      "attempt": 2,
+      "maxAttempts": 4,
+      "backoffMs": 2000,
+      "reason": "payments.list_payouts was rate limited (HTTP 429)",
+      "timestamp": "2026-10-19T03:30:02.356Z",
+      "status": "warning",
+      "metadata": {
+        "retry_policy": "honor Retry-After, max 4 attempts"
+      }
+    },
+    {
+      "id": "evt_06",
+      "sequence": 6,
+      "kind": "tool_call",
+      "toolName": "payments.list_payouts",
+      "callId": "call_02",
+      "timestamp": "2026-10-19T03:30:04.360Z",
+      "status": "ok",
+      "input": {
+        "date": "2026-10-18",
+        "page_size": 250
+      },
+      "metadata": {
+        "api_base": "https://payments.example.com/v1",
+        "api_key": "pk-demo-not-a-real-key-4242"
+      }
+    },
+    {
+      "id": "evt_07",
+      "sequence": 7,
+      "kind": "tool_result",
+      "toolName": "payments.list_payouts",
+      "callId": "call_02",
+      "timestamp": "2026-10-19T03:30:05.300Z",
+      "durationMs": 940,
+      "status": "ok",
+      "outcome": "success",
+      "output": {
+        "total": 214,
+        "has_more": false,
+        "payouts_sample": [
+          {
+            "id": "po_1021",
+            "amount_usd": 1520
+          },
+          {
+            "id": "po_1022",
+            "amount_usd": 84.25
+          },
+          {
+            "id": "po_1023",
+            "amount_usd": 9310.4
+          }
+        ]
+      },
+      "metadata": {
+        "http_status": 200
+      }
+    },
+    {
+      "id": "evt_08",
+      "sequence": 8,
+      "kind": "tool_call",
+      "toolName": "ledger.query",
+      "callId": "call_03",
+      "timestamp": "2026-10-19T03:30:05.350Z",
+      "status": "ok",
+      "input": {
+        "account": "1010-clearing",
+        "date": "2026-10-18"
+      },
+      "metadata": {}
+    },
+    {
+      "id": "evt_09",
+      "sequence": 9,
+      "kind": "tool_result",
+      "toolName": "ledger.query",
+      "callId": "call_03",
+      "timestamp": "2026-10-19T03:30:06.610Z",
+      "durationMs": 1260,
+      "status": "ok",
+      "outcome": "success",
+      "output": {
+        "entries": 212,
+        "total_usd": 412880.15
+      },
+      "metadata": {}
+    },
+    {
+      "id": "evt_10",
+      "sequence": 10,
+      "kind": "tool_call",
+      "toolName": "recon.compare",
+      "callId": "call_04",
+      "timestamp": "2026-10-19T03:30:06.660Z",
+      "status": "ok",
+      "input": {
+        "payouts_call": "call_02",
+        "ledger_call": "call_03",
+        "threshold_usd": 50
+      },
+      "metadata": {}
+    },
+    {
+      "id": "evt_11",
+      "sequence": 11,
+      "kind": "tool_result",
+      "toolName": "recon.compare",
+      "callId": "call_04",
+      "timestamp": "2026-10-19T03:30:07.180Z",
+      "durationMs": 520,
+      "status": "ok",
+      "outcome": "success",
+      "output": {
+        "compared": 214,
+        "matched": 211,
+        "within_threshold": 1,
+        "discrepancies": [
+          {
+            "payout_id": "po_1187",
+            "payout_usd": 2400,
+            "ledger_usd": 2310,
+            "delta_usd": 90
+          },
+          {
+            "payout_id": "po_1203",
+            "payout_usd": 75.5,
+            "ledger_usd": null,
+            "delta_usd": 75.5,
+            "note": "no matching ledger entry"
+          }
+        ]
+      },
+      "metadata": {}
+    },
+    {
+      "id": "evt_12",
+      "sequence": 12,
+      "kind": "agent_message",
+      "name": "Final answer",
+      "role": "assistant",
+      "timestamp": "2026-10-19T03:30:09.950Z",
+      "durationMs": 2700,
+      "status": "ok",
+      "text": "Reconciled 214 payouts against 212 ledger entries for 2026-10-18. 211 matched exactly and 1 differed by less than $50. Two discrepancies exceed $50: po_1187 (payout $2,400.00 vs ledger $2,310.00, +$90.00) and po_1203 ($75.50 with no matching ledger entry).",
+      "metadata": {
+        "model": "example-model-small",
+        "input_tokens": 2874,
+        "output_tokens": 82
+      }
+    }
+  ]
+}

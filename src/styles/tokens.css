@@ -1,0 +1,142 @@
+/*
+ * Design tokens. Every color is defined once with light-dark(), so the theme
+ * follows the OS by default and can be forced with [data-theme] on <html>.
+ * Text/background pairs meet WCAG AA (4.5:1); see scripts in the README.
+ *
+ * Palette: slate neutrals, blue for focus, selection, and the primary action.
+ * Three provenance colors mark where content comes from, and are always
+ * paired with a text label:
+ *   heuristic (violet)  rule-based interpretation
+ *   model (teal)        local-model output
+ *   example (yellow)    fictional example data, with a hatched pattern
+ */
+:root {
+  color-scheme: light dark;
+
+  --font-sans:
+    'IBM Plex Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
+  --font-mono:
+    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Type scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+
+  /* Spacing (4 px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Surfaces */
+  --bg: light-dark(#f5f7fa, #0f172a);
+  --surface: light-dark(#ffffff, #1b2336);
+  --surface-sunken: light-dark(#f1f4f8, #151d2f);
+  --surface-hover: light-dark(#f1f5f9, #242e45);
+  --border: light-dark(#e2e8f0, #2c3850);
+  --border-strong: light-dark(#c3cddb, #475569);
+  /* Boundaries of text fields and other controls that need 3:1 to be found */
+  --control-border: light-dark(#7f8da3, #6d7d96);
+
+  /* Text */
+  --text: light-dark(#0f172a, #e2e8f0);
+  --text-muted: light-dark(#475569, #a3b1c6);
+  --text-subtle: light-dark(#56657a, #94a3b8);
+
+  /* Accent: focus, selection, primary action */
+  --accent: light-dark(#1d4ed8, #7cb3fb);
+  --accent-hover: light-dark(#1e40af, #a5cbfd);
+  --accent-solid: light-dark(#2563eb, #60a5fa);
+  --accent-solid-hover: light-dark(#1d4ed8, #93c5fd);
+  --on-accent: light-dark(#ffffff, #0b1220);
+  --accent-bg: light-dark(#eff6ff, rgb(59 130 246 / 0.14));
+  --accent-border: light-dark(#bfdbfe, rgb(96 165 250 / 0.5));
+  --focus-ring: light-dark(#2563eb, #93c5fd);
+
+  /* Status tones: text, background, border */
+  --danger: light-dark(#b91c1c, #fca5a5);
+  --danger-bg: light-dark(#fef2f2, rgb(239 68 68 / 0.13));
+  --danger-border: light-dark(#fecaca, rgb(248 113 113 / 0.45));
+  --warning: light-dark(#b2400b, #fdba74);
+  --warning-bg: light-dark(#fff7ed, rgb(249 115 22 / 0.12));
+  --warning-border: light-dark(#fed7aa, rgb(251 146 60 / 0.45));
+  --success: light-dark(#047857, #6ee7b7);
+  --success-bg: light-dark(#ecfdf5, rgb(16 185 129 / 0.12));
+  --success-border: light-dark(#a7f3d0, rgb(52 211 153 / 0.42));
+  --info: light-dark(#1d4ed8, #93c5fd);
+  --info-bg: light-dark(#eff6ff, rgb(59 130 246 / 0.13));
+  --info-border: light-dark(#bfdbfe, rgb(96 165 250 / 0.45));
+  --neutral: light-dark(#475569, #cbd5e1);
+  --neutral-bg: light-dark(#f1f5f9, rgb(148 163 184 / 0.12));
+  --neutral-border: light-dark(#e2e8f0, rgb(148 163 184 / 0.3));
+
+  /* Provenance tones */
+  --heuristic: light-dark(#6d28d9, #c4b5fd);
+  --heuristic-bg: light-dark(#f5f3ff, rgb(139 92 246 / 0.12));
+  --heuristic-border: light-dark(#9a7af7, rgb(167 139 250 / 0.75));
+  --model: light-dark(#0f766e, #5eead4);
+  --model-bg: light-dark(#f0fdfa, rgb(20 184 166 / 0.1));
+  --model-border: light-dark(#14a394, rgb(45 212 191 / 0.6));
+  --model-solid: light-dark(#0f766e, #2dd4bf);
+  --model-solid-hover: light-dark(#115e59, #5eead4);
+  --on-model: light-dark(#ffffff, #042f2e);
+  --example: light-dark(#854d0e, #fde047);
+  --example-bg: light-dark(#fefce8, rgb(234 179 8 / 0.1));
+  --example-border: light-dark(#a88308, rgb(250 204 21 / 0.6));
+  --example-stripe: light-dark(rgb(234 179 8 / 0.14), rgb(250 204 21 / 0.07));
+
+  /* Trace graphics (non-text, 3:1 against surfaces) */
+  --lane: light-dark(#7f8da3, #6d7d96);
+  --spine: light-dark(#d5dce6, #34405a);
+
+  /* Search highlight */
+  --mark-bg: light-dark(#fde68a, rgb(250 204 21 / 0.32));
+  --mark-text: light-dark(#1c1300, #fef9c3);
+
+  /* JSON syntax */
+  --json-key: light-dark(#0b5cad, #7dd3fc);
+  --json-string: light-dark(#0a6b3d, #86efac);
+  --json-number: light-dark(#9a3412, #fdba74);
+  --json-literal: light-dark(#a21caf, #f0abfc);
+
+  /* Shape and depth */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow-sm: 0 1px 2px light-dark(rgb(15 23 42 / 0.06), rgb(0 0 0 / 0.3));
+  --shadow-md: 0 4px 14px light-dark(rgb(15 23 42 / 0.08), rgb(0 0 0 / 0.4));
+  --shadow-lg: 0 24px 56px light-dark(rgb(15 23 42 / 0.22), rgb(0 0 0 / 0.6));
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --duration: 160ms;
+
+  /* Layout */
+  --gutter: 16px;
+  --page-max: 1320px;
+  --header-h: 52px;
+  --tabs-h: 48px;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gutter: 24px;
+  }
+}

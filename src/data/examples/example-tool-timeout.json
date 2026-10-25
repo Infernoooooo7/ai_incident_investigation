@@ -1,0 +1,181 @@
+{
+  "id": "example-tool-timeout",
+  "agentName": "support-triage-agent",
+  "agentVersion": "1.8.2",
+  "task": "Summarize all open P1 tickets for account DEMO-001 and draft a status update for their engineering lead.",
+  "summary": "Ticket search timed out on both attempts; no status update was drafted.",
+  "status": "failed",
+  "startedAt": "2026-10-24T14:02:11.204Z",
+  "endedAt": "2026-10-24T14:03:17.512Z",
+  "metadata": {
+    "example": "Fictional run bundled with Agent Incident Investigator",
+    "trigger": "chat command",
+    "model": "example-model-large"
+  },
+  "events": [
+    {
+      "id": "evt_01",
+      "sequence": 1,
+      "kind": "agent_message",
+      "name": "Task",
+      "role": "user",
+      "timestamp": "2026-10-24T14:02:11.204Z",
+      "status": "ok",
+      "text": "Summarize all open P1 tickets for account DEMO-001 and draft a status update I can send to their engineering lead.",
+      "metadata": {
+        "channel": "#support-escalations",
+        "requested_by": "support-oncall"
+      }
+    },
+    {
+      "id": "evt_02",
+      "sequence": 2,
+      "kind": "agent_message",
+      "name": "Plan",
+      "role": "assistant",
+      "timestamp": "2026-10-24T14:02:12.981Z",
+      "durationMs": 1690,
+      "status": "ok",
+      "text": "I'll pull the open P1 tickets for DEMO-001 from the ticketing system, group them by theme, and draft a short status update.",
+      "metadata": {
+        "model": "example-model-large",
+        "input_tokens": 1820,
+        "output_tokens": 61
+      }
+    },
+    {
+      "id": "evt_03",
+      "sequence": 3,
+      "kind": "tool_call",
+      "toolName": "tickets.search",
+      "callId": "call_01",
+      "timestamp": "2026-10-24T14:02:13.040Z",
+      "status": "ok",
+      "input": {
+        "account_id": "DEMO-001",
+        "priority": "P1",
+        "status": "open",
+        "include": ["comments", "attachments", "history"],
+        "limit": 500
+      },
+      "metadata": {
+        "attempt": 1,
+        "timeout_ms": 30000,
+        "endpoint": "https://tickets-api.internal.example/v2/search",
+        "request_headers": {
+          "authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdXBwb3J0LXRyaWFnZSJ9.ZmFrZS1zaWduYXR1cmUtZm9yLWRlbW8",
+          "x-request-id": "req_5c1e0b72"
+        }
+      }
+    },
+    {
+      "id": "evt_04",
+      "sequence": 4,
+      "kind": "tool_result",
+      "toolName": "tickets.search",
+      "callId": "call_01",
+      "timestamp": "2026-10-24T14:02:43.052Z",
+      "durationMs": 30012,
+      "status": "error",
+      "outcome": "timeout",
+      "errorCode": "TIMEOUT",
+      "errorMessage": "Request to tickets-api.internal.example timed out after 30000 ms",
+      "output": null,
+      "metadata": {
+        "request_id": "req_5c1e0b72",
+        "upstream": "tickets-api",
+        "bytes_received": 0
+      }
+    },
+    {
+      "id": "evt_05",
+      "sequence": 5,
+      "kind": "retry",
+      "toolName": "tickets.search",
+      "previousCallId": "call_01",
+      "attempt": 2,
+      "maxAttempts": 2,
+      "backoffMs": 2000,
+      "reason": "tickets.search timed out (TIMEOUT)",
+      "timestamp": "2026-10-24T14:02:43.061Z",
+      "status": "warning",
+      "metadata": {
+        "retry_policy": "fixed backoff, 2 attempts"
+      }
+    },
+    {
+      "id": "evt_06",
+      "sequence": 6,
+      "kind": "tool_call",
+      "toolName": "tickets.search",
+      "callId": "call_02",
+      "timestamp": "2026-10-24T14:02:45.071Z",
+      "status": "ok",
+      "input": {
+        "account_id": "DEMO-001",
+        "priority": "P1",
+        "status": "open",
+        "include": ["comments", "attachments", "history"],
+        "limit": 500
+      },
+      "metadata": {
+        "attempt": 2,
+        "timeout_ms": 30000,
+        "endpoint": "https://tickets-api.internal.example/v2/search",
+        "request_headers": {
+          "authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdXBwb3J0LXRyaWFnZSJ9.ZmFrZS1zaWduYXR1cmUtZm9yLWRlbW8",
+          "x-request-id": "req_9a77d2c4"
+        }
+      }
+    },
+    {
+      "id": "evt_07",
+      "sequence": 7,
+      "kind": "tool_result",
+      "toolName": "tickets.search",
+      "callId": "call_02",
+      "timestamp": "2026-10-24T14:03:15.090Z",
+      "durationMs": 30019,
+      "status": "error",
+      "outcome": "timeout",
+      "errorCode": "TIMEOUT",
+      "errorMessage": "Request to tickets-api.internal.example timed out after 30000 ms",
+      "output": null,
+      "metadata": {
+        "request_id": "req_9a77d2c4",
+        "upstream": "tickets-api",
+        "bytes_received": 0
+      }
+    },
+    {
+      "id": "evt_08",
+      "sequence": 8,
+      "kind": "error",
+      "errorType": "ToolTimeoutError",
+      "message": "tickets.search timed out on 2 of 2 attempts; retry budget exhausted",
+      "fatal": true,
+      "callId": "call_02",
+      "timestamp": "2026-10-24T14:03:15.102Z",
+      "status": "error",
+      "metadata": {
+        "handler": "agent-runtime/retry-policy"
+      }
+    },
+    {
+      "id": "evt_09",
+      "sequence": 9,
+      "kind": "agent_message",
+      "name": "Final answer",
+      "role": "assistant",
+      "timestamp": "2026-10-24T14:03:17.418Z",
+      "durationMs": 2290,
+      "status": "ok",
+      "text": "I couldn't retrieve the open P1 tickets for DEMO-001. The ticketing API timed out on both attempts, so I haven't drafted the status update. It may help to check the ticketing service's status, or ask me to search a narrower set of tickets.",
+      "metadata": {
+        "model": "example-model-large",
+        "input_tokens": 2410,
+        "output_tokens": 58
+      }
+    }
+  ]
+}
